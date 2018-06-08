@@ -1,0 +1,45 @@
+{
+    "sights": {
+        "_model": "Sight",
+        "Khatyn_massacre": {
+            "keys": {
+                "en": {
+                    "key1": "Khatyn_massacre",
+                    "key2": 4415731
+                },
+                "ru": {
+                    "key1": "Хатынь",
+                    "key2": 135778
+                },
+                "be": {
+                    "key1": "Хатынь",
+                    "key2": 52337
+                }
+            },
+            "coords": {
+                "lat": 54.33615556,
+                "lon": 27.94075278
+            }
+        },
+        "Mir_Castle_Complex": {
+            "keys": {
+                "en": {
+                    "key1": "Mir_Castle_Complex",
+                    "key2": 224254
+                },
+                "ru": {
+                    "key1": "Мирский_замок",
+                    "key2": 313397
+                },
+                "be": {
+                    "key1": "Мірскі_замак",
+                    "key2": 17710
+                }
+            },
+            "coords": {
+                "lat": 53.45123889,
+                "lon": 26.473
+            }
+        }
+    }
+}
