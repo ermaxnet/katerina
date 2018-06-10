@@ -1,5 +1,4 @@
-const { request } = require("./functions");
-const Showplace = require("../models/showplace");
+const { request, mapToObj } = require("./functions");
 
 class Wiki {
     constructor({ 
@@ -9,23 +8,22 @@ class Wiki {
         this.endpoint = endpoint;
         this.userAgent = userAgent;
     }
-    iEndpoint(lang = "en") {
+    _localize(lang = "en") {
         return this.endpoint.replace(/lang/i, lang);
     }
-    getPage(data) {
-        if(!data.query || !data.query.pages) {
-            return null;
+    _parse({ query }) {
+        if(!query || !query.pages) {
+            return {};
         }
-        const pages = Object.values(data.query.pages);
-        return pages.length ? pages[0] : null;
+        return Object.values(query.pages)[0];
     }
-    async getPageID(title, lang) {
+    async _send(query, lang) {
         return request(
-            this.iEndpoint(lang),
+            this._localize(lang),
             {
                 action: "query",
                 format: "json",
-                titles: title
+                ...query
             },
             {
                 method: "GET",
@@ -33,100 +31,87 @@ class Wiki {
                     "User-Agent": this.userAgent
                 }
             }
-        ).then(data => {
-            const page = this.getPage(data);
-            return page.pageid;
-        });
+        );
     }
-    async getShowplace(key, lang) {
-        if(typeof key === "string") {
-            key = await this.getPageID(key, lang);
-        }
-        return request(
-            this.iEndpoint(lang), 
-            { 
-                action: "query",
-                pageids: key,
-                format: "json",
-                prop: "extracts|pageimages|info|coordinates",
-                exintro: true,
-                explaintext: true,
-                pithumbsize: 500,
-                piprop: "thumbnail",
-                inprop: "displaytitle|url"
-            }, 
-            {
-                method: "POST",
-                headers: {
-                    "User-Agent": this.userAgent
+    async _getId(key1, lang) {
+        return this._send({ titles: key1 }, lang)
+            .then(response => this._parse(response))
+            .then(({ pageid }) => pageid);
+    }
+    async getSight(keys) {
+        const idsTasks = Array.from(keys.keys()).map(async lang => {
+            const key2 = await this._getId(keys.get(lang).key1, lang);
+            return { lang, value: key2 };
+        });
+        return Promise.all(idsTasks)
+            .then(keys2 => {
+                for (const key2 of keys2) {
+                    keys.get(key2.lang).key2 = key2.value;
                 }
-            }
-        )
-        .then(data => this.getPage(data))
-        .then(page => {
-            if(!page) {
-                throw new Error(`Не найдены результата для запроса ${key}`);
-            }
-            const thumbnail = (page.thumbnail || {}).source;
-            return new Showplace({
-                id: page.pageid,
-                title: page.displaytitle,
-                text: page.extract,
-                thumbnail,
-                link: page.fullurl,
-                updatedAt: page.touched
-            });
-        });
-    }
-    async getCoords(key, lang) {
-        if(typeof key === "string") {
-            key = await this.getPageID(key, lang);
-        }
-        return request(
-            this.iEndpoint(lang), 
-            { 
-                action: "query",
-                pageids: key,
-                format: "json",
-                prop: "coordinates"
-            }, 
-            {
-                method: "POST",
-                headers: {
-                    "User-Agent": this.userAgent
-                }
-            }
-        )
-        .then(data => this.getPage(data))
-        .then(page => {
-            if(!page) {
-                throw new Error(`Не найдены результата для запроса ${key}`);
-            }
-            let coords = page.coordinates || null;
-            if(coords && coords.length) {
-                coords = {
-                    lat: coords[0].lat,
-                    lon: coords[0].lon
-                };
-            }
-            return coords;
-        });
-    }
-    async getBaseData(keys) {
-        const tasks = Object.keys(keys).map(async (lang) => {
-            const key2 = await this.getPageID(keys[lang].key1, lang);
-            return { lang, key2 };
-        });
-        return Promise.all(tasks)
-            .then(keys => {
-                return Promise.all([
-                    this.getCoords(keys[0].key2, keys[0].lang),
-                    Promise.resolve(keys)
-                ]);
+                return keys;
             })
-            .then(([ coords, keys ]) => {
-                return { keys, coords };
+            .then(keys => {
+                const namesTasks = Array.from(keys.keys()).map(async lang => {
+                    const response = await this._send({ 
+                        pageids: keys.get(lang).key2,
+                        prop: "info",
+                        inprop: "displaytitle"
+                    }, lang);
+                    const { displaytitle } = this._parse(response);
+                    return [ lang, displaytitle ];
+                });
+                return Promise.all(namesTasks);
+            })
+            .then(names => {
+                return Promise.all(
+                    [
+                        this._send({
+                            pageids: keys.values().next().value.key2,
+                            prop: "coordinates"
+                        }),
+                        new Map(names)
+                    ]
+                );
+            })
+            .then(([ response, names ]) => {
+                let { coordinates: coords } = this._parse(response);
+                if(coords) {
+                    coords = {
+                        lat: coords[0].lat,
+                        lon: coords[0].lon
+                    };
+                }
+                return { 
+                    keys: mapToObj(keys), 
+                    names: mapToObj(names),
+                    coords 
+                };
             });
+    }
+    async getSightDetail(key, lang) {
+        if(typeof key === "string") {
+            key = await this._getId(key, lang);
+        }
+        const response = await this._send({
+            pageids: key,
+            prop: "extracts|pageimages|info|coordinates",
+            exintro: true,
+            explaintext: true,
+            pithumbsize: 500,
+            piprop: "thumbnail",
+            inprop: "url"
+        }, lang);
+        const {
+            extract: text,
+            fullurl: wikiLink,
+            touched: updatedAt,
+            thumbnail: {
+                source: thumbnail
+            }
+        } = this._parse(response);
+        return {
+            text, wikiLink, updatedAt, thumbnail
+        };
     }
 };
 

@@ -36,6 +36,14 @@ const request = (endpoint, query, options = {}) => {
     return task;
 };
 
+const mapToObj = map => {
+    const object = Object.create(null);
+    for ([ key, value ] of map) {
+        object[key] = value;
+    }
+    return object;
+};
+
 module.exports = {
-    request
+    request, mapToObj
 };

@@ -16,10 +16,23 @@
                     "key2": 52337
                 }
             },
+            "names": {
+                "en": "Khatyn massacre",
+                "ru": "Хатынь",
+                "be": "Хатынь"
+            },
             "coords": {
                 "lat": 54.33615556,
                 "lon": 27.94075278
-            }
+            },
+            "link": "http://www.khatyn.by/en/",
+            "tags": [
+                "#Хатынь",
+                "#hatyn",
+                "#хатыньбеларусь"
+            ],
+            "comfirmed": true,
+            "email": "eremin.m.y@yandex.by"
         },
         "Mir_Castle_Complex": {
             "keys": {
@@ -36,10 +49,22 @@
                     "key2": 17710
                 }
             },
+            "names": {
+                "en": "Mir Castle Complex",
+                "ru": "Мирский замок",
+                "be": "Мірскі замак"
+            },
             "coords": {
                 "lat": 53.45123889,
                 "lon": 26.473
-            }
+            },
+            "link": "http://mirzamak.by/en/",
+            "tags": [
+                "#мирскийзамок",
+                "#zamokmir"
+            ],
+            "comfirmed": true,
+            "email": "eremin.m.y@yandex.by"
         }
     }
 }

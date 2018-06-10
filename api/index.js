@@ -1,21 +1,28 @@
-const { 
-    connect, 
-    disconnect, 
-    models: { Sight } 
-} = require("./database");
+const express = require("express");
+const bodyParser = require("body-parser");
+const { connect } = require("./database");
 
-connect({ NODE_ENV: "test" })
-    .then(() => {
-        console.log("done");
-        return Sight.find();
-    })
-    .then(sights => {
-        sights.forEach(element => {
-            console.log(element);
-        });
-        return disconnect();
-    })
-    .then(() => {
-        console.log("end");
-     })
-    .catch(err => console.error(err));
+const app = express();
+app.set("port", process.env.PORT || 3000);
+app.set("json spaces", 40);
+
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+
+const router = express.Router({ mergeParams: true });
+app.use("/api", require("./routes/sight")(router));
+
+app.use((req, res, next) => {
+    console.log(404);
+    res.end();
+});
+app.use((err, req, res, next) => {
+    console.error(err);
+    res.end();
+});
+
+connect(process.env).then(() => {
+    app.listen(app.get("port"), () => {
+        console.log(`Katerina API listen on port ${app.get("port")}`);
+    });
+});

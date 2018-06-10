@@ -1,0 +1,22 @@
+[
+    {
+        "name": "Khatyn_massacre",
+        "keys": [
+            [ "en", { "key1": "Khatyn_massacre" } ],
+            [ "ru", { "key1": "Хатынь" } ],
+            [ "be", { "key1": "Хатынь" } ]
+        ],
+        "link": "http://www.khatyn.by/en/",
+        "tags": [ "#Хатынь", "#hatyn", "#хатыньбеларусь" ]
+    },
+    {
+        "name": "Mir_Castle_Complex",
+        "keys": [
+            [ "en", { "key1": "Mir_Castle_Complex" } ],
+            [ "ru", { "key1": "Мирский_замок" } ],
+            [ "be", { "key1": "Мірскі_замак" } ]
+        ],
+        "link": "http://mirzamak.by/en/",
+        "tags": [ "#мирскийзамок", "#zamokmir" ]
+    }
+]
