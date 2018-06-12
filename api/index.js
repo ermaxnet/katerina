@@ -10,6 +10,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 const router = express.Router({ mergeParams: true });
+app.use("/api", require("./routes/geolocation")(router));
 app.use("/api", require("./routes/sight")(router));
 
 app.use((req, res, next) => {

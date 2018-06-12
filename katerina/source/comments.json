@@ -5,7 +5,7 @@
         "email": "goodkat@mail.ru",
         "publishAt": "2018-06-12T07:15:56+00:00",
         "name": "Быкова Екатерина",
-        "country": "BLR",
+        "flag": "http://assets.ipstack.com/flags/by.svg",
         "sight": "5b1f703c22dd4f58247928e2",
         "text": "Страшное напоминание всему человечеству. Сильное место. Каждый должен побывать там хоть раз"
     },
@@ -14,7 +14,7 @@
         "email": "eremin_my@outlook.com",
         "publishAt": "2018-06-12T07:15:56+00:00",
         "name": "Ерёмин Максим",
-        "country": "BLR",
+        "flag": "http://assets.ipstack.com/flags/by.svg",
         "sight": "5b1f703c22dd4f58247928e2",
         "text": "Живу в Беларуси всю жизнь. Пока ещё там не бывал, но про место наслышан. Думаю, стоит согласится с Катериной."
     }

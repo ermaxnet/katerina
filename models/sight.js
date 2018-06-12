@@ -14,7 +14,8 @@ class Sight {
         tags,
         link,
         rate,
-        comments
+        comments,
+        email
     }) {
         this.id = id;
         this.key = key;
@@ -27,8 +28,9 @@ class Sight {
         this.tags = tags;
         this.link = link;
         this.rate = rate;
+        this.email = email;
         
-        if(comments) {
+        if(comments && typeof comments === "object") {
             this.comments = 
                 comments.map(comment => new Comment(comment));
         }
@@ -38,6 +40,9 @@ class Sight {
         this.wikiLink = detail.wikiLink;
         this.updatedAt = moment(detail.updatedAt);
         this.text = detail.text;
+    }
+    get existKey() {
+        return this.key.key2 || this.key.key1;
     }
 };
 

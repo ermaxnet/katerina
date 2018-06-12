@@ -45,8 +45,8 @@ CLI АПИ должно уметь восстанавливать json файл 
     Date required
 - name
     String allow null
-- country
-    String allow null max length 3
+- flag
+    String allow null
 - sight
     ID of <SIGHT>
 - text

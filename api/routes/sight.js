@@ -8,76 +8,94 @@ const Comment = require("../../models/comment");
 const Wiki = require("../../wiki-api");
 const wiki = new Wiki();
 
-const sightConverter = (sight, lang) => {
-    console.log(typeof sight[0].names);
-    const name = sight.names.get(lang);
-    const keys = sight.keys.get(lang);
-    return new Sight({
-        id: sight.id,
-        key: keys.key2 || keys.key1,
-        name,
-        coords: sight.coords,
-        tags: sight.tags,
-        link: sight.link,
-        rate: sight.rate,
-        comments: sight.comments
-    });
-};
-
 module.exports = router => {
-    router.get("/:lang?/sights", localize, (req, res) => {
-        SightModel.find()
-            .then(sights => {
-                if(!sights || !sights.length) {
-                    return res.status(200).end();
-                }
-                sights = sights.map(sight => sightConverter(sight, req.lang));
-                return res.status(201).json(sights);
-            });
+    router.get("/:lang?/sights", localize, (req, res, next) => {
+        SightModel.aggregate([
+            { $match: { comfirmed: { $eq: true } } },
+            { $project: {
+                id: "$_id",
+                key: `$keys.${req.lang}`,
+                name: `$names.${req.lang}`,
+                coords: 1, rate: 1, email: 1
+            } }
+        ]).then(sights => {
+            if(!sights || !sights.length) {
+                return next(400);
+            }
+            sights = sights.map(sight => new Sight(sight));
+            return res.status(200).json(sights);
+        });
     });
-    router.get("/:lang?/sight/:id", localize, (req, res) => {
-        SightModel
-            .aggregate([
+    router.get("/:lang?/sight/:id", localize, (req, res, next) => {
+        SightModel.aggregate([
                 { $match: { _id: mongoose.Types.ObjectId(req.params.id) } },
-                { $addFields: { names: { $objectToArray: "$names" } } },
-                { $addFields: { names: { $filter: {
-                    input: "$names",
-                    as: "name",
-                    cond: { $eq: [ "$$name.k", req.lang ] }
-                } } } },
-                { $addFields: { keys: { $objectToArray: "$keys" } } },
-                { 
-                    $project: {
-                        names: { $arrayToObject: "$names" },
-                        keys: {
-                            $filter: {
-                                input: "$names",
-                                as: "name",
-                                cond: { $eq: [ "$$name.k", req.lang ] }
-                            }
-                        }
-                    } 
-                },
+                { $project: {
+                    id: "$_id",
+                    key: `$keys.${req.lang}`,
+                    name: `$names.${req.lang}`,
+                    rate: 1, 
+                    comments: { $size: "$comments" }
+                } },
                 { $limit: 1 }
-            ])
-            .then(sight => sightConverter(sight, req.lang))
-            .then(sight => {
+            ]).then(sights => {
+                if(!sights || !sights.length) {
+                    return next(400);
+                }
+                return new Sight(sights[0]);
+            }).then(sight => {
                 return Promise.all([
-                    wiki.getSightDetail(sight.key, req.lang),
+                    wiki.getSightDetail(sight.existKey, req.lang),
                     sight
                 ]);
-            })
-            .then(([ detail, sight ]) => {
+            }).then(([ detail, sight ]) => {
                 sight.addDetail(detail);
-                return res.status(201).json(sight);
+                return res.status(200).json(sight);
             });
     });
-    router.get("/sight/:id/comments", (req, res) => {
-        CommentModel.find({ sight: req.params.id })
+    router.get("/sight/:id/comments", (req, res, next) => {
+        CommentModel.find({ sight: req.params.id }, "email publishAt name flag text")
             .then(comments => {
-                return res.status(201).json(comments);
+                if(!comments || !comments.length) {
+                    return next(400);
+                }
+                comments = comments.map(comment => new Comment(comment));
+                return res.status(200).json(comments);
             });
     });
+    router.post("/sight/:id/rate", (req, res, next) => {
+        const rate = req.body.rate;
+        if(rate < 0 && rate > 10) {
+            return next(400);
+        }
+        SightModel.aggregate([
+            { $match: { _id: mongoose.Types.ObjectId(req.params.id) } },
+            { $addFields: {
+                sum: { $sum: "$rates" },
+                count: { $size: "$rates" }
+            } },
+            { $addFields: {
+                totalSum: { $add: [ "$sum", +rate ] },
+                totalCount: { $add: [ "$count", 1 ] }
+            } },
+            { $project: {
+                rate: { $floor: { $divide: [ "$totalSum", "$totalCount" ] } }
+            } }
+        ]).then(sights => {
+            if(!sights || !sights.length) {
+                return next(400);
+            }
+            const new_rate = sights[0].rate;
+            return Promise.all([
+                new_rate,
+                SightModel.update({ _id: req.params.id }, { 
+                    $set: { rate: new_rate },
+                    $push: { rates: rate }
+                })
+            ]);
+        }).then(([ new_rate ]) => {
+            res.json(new_rate);
+        });
+    })
 
     return router;
 };

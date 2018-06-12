@@ -1,4 +1,5 @@
 const https = require("https");
+const http = require("http");
 const url = require("url");
 const querystring = require("querystring");
 
@@ -16,14 +17,17 @@ const request = (endpoint, query, options = {}) => {
     } else {
         path += "?" + query;
     }
+    const protocol = options.protocol === "http" ? http : https;
+    const port = options.protocol === "http" ? 80 : 443;
+    delete options.protocol;
     options = {
         ...options,
-        hostname, path, port: 443,
+        hostname, path, port,
         method,
         headers
     };
     const task = new Promise((done, error) => {
-        const request = https.request(options, response => {
+        const request = protocol.request(options, response => {
             let data = "";
             response.on("data", chunk => data += chunk);
             response.on("end", () => done(JSON.parse(data)));

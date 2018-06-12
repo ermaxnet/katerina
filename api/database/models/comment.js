@@ -10,10 +10,7 @@ module.exports = mongoose => {
             required: true
         },
         name: String,
-        country: {
-            type: String,
-            maxlength: 3
-        },
+        flag: String,
         sight: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "Sight"
