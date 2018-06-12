@@ -11,5 +11,5 @@ module.exports = {
     async disconnect() {
         return mongoose.connection.close();
     },
-    models: { Sight, Comment }
+    models: { Sight, Comment }, mongoose
 };

@@ -1,70 +1,28 @@
-{
-    "sights": {
-        "_model": "Sight",
-        "Khatyn_massacre": {
-            "keys": {
-                "en": {
-                    "key1": "Khatyn_massacre",
-                    "key2": 4415731
-                },
-                "ru": {
-                    "key1": "Хатынь",
-                    "key2": 135778
-                },
-                "be": {
-                    "key1": "Хатынь",
-                    "key2": 52337
-                }
-            },
-            "names": {
-                "en": "Khatyn massacre",
-                "ru": "Хатынь",
-                "be": "Хатынь"
-            },
-            "coords": {
-                "lat": 54.33615556,
-                "lon": 27.94075278
-            },
-            "link": "http://www.khatyn.by/en/",
-            "tags": [
-                "#Хатынь",
-                "#hatyn",
-                "#хатыньбеларусь"
-            ],
-            "comfirmed": true,
-            "email": "eremin.m.y@yandex.by"
-        },
-        "Mir_Castle_Complex": {
-            "keys": {
-                "en": {
-                    "key1": "Mir_Castle_Complex",
-                    "key2": 224254
-                },
-                "ru": {
-                    "key1": "Мирский_замок",
-                    "key2": 313397
-                },
-                "be": {
-                    "key1": "Мірскі_замак",
-                    "key2": 17710
-                }
-            },
-            "names": {
-                "en": "Mir Castle Complex",
-                "ru": "Мирский замок",
-                "be": "Мірскі замак"
-            },
-            "coords": {
-                "lat": 53.45123889,
-                "lon": 26.473
-            },
-            "link": "http://mirzamak.by/en/",
-            "tags": [
-                "#мирскийзамок",
-                "#zamokmir"
-            ],
-            "comfirmed": true,
-            "email": "eremin.m.y@yandex.by"
-        }
+[
+    {
+        "name": "Khatyn_massacre",
+        "_id": "5b1f703c22dd4f58247928e2",
+        "keys": [
+            [ "en", { "key1": "Khatyn_massacre" } ],
+            [ "ru", { "key1": "Хатынь" } ],
+            [ "be", { "key1": "Хатынь" } ]
+        ],
+        "link": "http://www.khatyn.by/en/",
+        "tags": [ "#Хатынь", "#hatyn", "#хатыньбеларусь" ],
+        "comments": [
+            "->comments.one",
+            "->comments.two"
+        ]
+    },
+    {
+        "name": "Mir_Castle_Complex",
+        "_id": "5b1f703d22dd4f58247928e3",
+        "keys": [
+            [ "en", { "key1": "Mir_Castle_Complex" } ],
+            [ "ru", { "key1": "Мирский_замок" } ],
+            [ "be", { "key1": "Мірскі_замак" } ]
+        ],
+        "link": "http://mirzamak.by/en/",
+        "tags": [ "#мирскийзамок", "#zamokmir" ]
     }
-}
+]

@@ -1,4 +1,4 @@
-const source = require("./source/source.json");
+const source = require("./source/sights.json");
 const Wiki = require("../wiki-api");
 const fs = require("fs");
 const path = require("path");
@@ -15,17 +15,18 @@ Promise.all(tasks).then(sights => {
         _model: "Sight"
     };
     sights.forEach((sight, index) => {
-        const { link, tags, name } = source[index];
+        const { link, tags, name, _id, comments = [] } = source[index];
         data[name] = {
             ...sight,
             link, tags,
             comfirmed: true,
-            email: "eremin.m.y@yandex.by"
+            email: "eremin.m.y@yandex.by",
+            _id, comments
         };
     });
     fs.writeFile(
-        path.join(__dirname, "source", "sights.json"), 
-        JSON.stringify({ sights: data }), 
+        path.join(__dirname, "source", "db.json"), 
+        JSON.stringify({ comments: require("./source/comments.json"), sights: data }), 
         () => {
             console.log("Файл с достопримечательностями успешно записан");
         }
