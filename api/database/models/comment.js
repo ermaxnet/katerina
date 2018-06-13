@@ -21,5 +21,9 @@ module.exports = mongoose => {
             maxlength: 280
         }
     });
+    schema.pre("save", function(next) {
+        this.publishAt = Date.now();
+        next();
+    });
     return mongoose.model("Comment", schema);
 };

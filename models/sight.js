@@ -33,6 +33,8 @@ class Sight {
         if(comments && typeof comments === "object") {
             this.comments = 
                 comments.map(comment => new Comment(comment));
+        } else if(typeof comments === "number") {
+            this.comments = comments;
         }
     }
     addDetail(detail) {

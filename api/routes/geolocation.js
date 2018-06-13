@@ -1,27 +1,19 @@
-const {
-    api: { ipstack: { url, key } },
-    def_lang
-} = require("../../settings.json");
-const { request } = require("../../wiki-api/functions");
+const { def_lang } = require("../../settings.json");
+const geolocation = require("../middlewares/geolocation");
 
 module.exports = router => {
-    router.get("/geolocation/lang", (req, res) => {
-        const ip = "37.44.78.50";
-        request(url + ip, { access_key: key }, { protocol: "http" })
-            .then(({
-                country_code
-            }) => {
-                let lang = def_lang;
-                switch(country_code) {
-                    case "BY":
-                        lang = "be";
-                        break;
-                    case "RU":
-                        lang = "ru";
-                        break;
-                }
-                res.json({ lang });
-            });
+    router.get("/geolocation/lang", geolocation, (req, res) => {
+        let lang = def_lang;
+        const { country_code } = req.geolocation || {};
+        switch(country_code) {
+            case "BY":
+                lang = "be";
+                break;
+            case "RU":
+                lang = "ru";
+                break;
+        }
+        res.json({ lang });
     });
     router.get("/geolocation/ip", (req, res) => {
         const ip = req.headers["X-Forwarded-For"]

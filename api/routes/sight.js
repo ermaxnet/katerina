@@ -1,4 +1,5 @@
 const localize = require("../middlewares/localize");
+const geolocation = require("../middlewares/geolocation");
 const {
     models: { Sight: SightModel, Comment: CommentModel },
     mongoose
@@ -95,7 +96,28 @@ module.exports = router => {
         }).then(([ new_rate ]) => {
             res.json(new_rate);
         });
-    })
+    });
+    router.put("/sight/:id/comment", geolocation, (req, res, next) => {
+        const comment = new Comment(req.body.comment);
+        const { country_flag = null } = req.geolocation || {};
+        comment.flag = country_flag;
+        comment.sight = req.params.id;
+        CommentModel.create(comment)
+            .then(({ _id, publishAt }) => {
+                comment.publishAt = publishAt;
+                return SightModel.update(
+                    { _id: req.params.id },
+                    { $push: { comments: _id } }
+                );
+            })
+            .then(() => {
+                res.status(201).json(comment);
+            });
+    });
+    router.put("/sight", (req, res, next) => {
+        const wikiLink = req.body.link;
+        res.json(wikiLink);
+    });
 
     return router;
 };
