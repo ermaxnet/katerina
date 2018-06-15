@@ -1,4 +1,5 @@
-const { request, mapToObj } = require("./functions");
+const { request, mapToObj, parseWikiLink } = require("./functions");
+const { langs: official_langs } = require("../settings.json");
 
 class Wiki {
     constructor({ 
@@ -121,29 +122,47 @@ class Wiki {
             text, wikiLink, updatedAt, thumbnail
         };
     }
-    async getNewSightDetail(name, lang) {
+    async getNewSightDetail(link) {
+        const [ lang, name ] = parseWikiLink(link);
+        if(!name || !lang) {
+            return null;
+        }
         const {
             langlinks: links,
-            coordinates: [ { lat, lon } ]
+            coordinates: [ { lat, lon } ], pageid
         } = await this._send({
             titles: name,
             prop: "coordinates|langlinks",
             lllimit: 500,
             llprop: "url"
         }, lang);
+        const keys = new Map(), names = new Map(), tasks = [];
+        if(official_langs.includes(lang)) {
+            keys.set(lang, {
+                key1: name,
+                key2: pageid
+            });
+            names.set(lang, name);
+        }
         if(!links || !links.length || !(lat && lon)) {
+            if(keys.size) {
+                return {
+                    keys, names,
+                    coords: { lat, lon }
+                };
+            }
             return null;
         }
         const langs = links.filter(link => {
-            return [ "ru", "be", "en" ].includes(link.lang);
+            return official_langs.includes(link.lang);
         });
-        let names = [], tasks = [];
-        const keys = new Map(langs.map(link => {
-            names.push([ link.lang, link["*"] ]);
+        langs.forEach(link => {
+            names.set(link.lang, link["*"]);
+            keys.set(link.lang, { 
+                key1: link["*"] 
+            });
             tasks.push(this._getId(link["*"], link.lang, true));
-            return [ link.lang, { key1: link["*"] } ];
-        }));
-        names = new Map(names);
+        });
         return Promise.all(tasks)
             .then(pages => {
                 pages.forEach(page => {
@@ -158,11 +177,5 @@ class Wiki {
             });
     }
 };
-
-const wiki = new Wiki();
-wiki.getNewSightDetail("Zamek_w_Nieświeżu", "pl")
-    .then(tasks => {
-        console.log(tasks);
-    });
 
 module.exports = Wiki;

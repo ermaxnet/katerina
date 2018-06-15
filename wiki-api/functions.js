@@ -48,6 +48,19 @@ const mapToObj = map => {
     return object;
 };
 
+const parseWikiLink = link => {
+    if(!link) {
+        return [ null, null ];
+    }
+    const regexLang = /(?:\/\/)([a-z][a-z])(?:.)/i;
+    const regexName = /(?:wiki\/)(.*)/i;
+    const lang = link.match(regexLang);
+    const name = link.match(regexName);
+    return lang.length === 2 && name.length === 2
+        ? [ lang[1], decodeURIComponent(name[1]) ]
+        : [ null, null ];
+};
+
 module.exports = {
-    request, mapToObj
+    request, mapToObj, parseWikiLink
 };

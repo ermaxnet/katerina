@@ -115,8 +115,28 @@ module.exports = router => {
             });
     });
     router.put("/sight", (req, res, next) => {
-        const wikiLink = req.body.link;
-        res.json(wikiLink);
+        const { 
+            link: wiki_link, 
+            official_site,
+            tags = [], email
+        } = req.body;
+        wiki.getNewSightDetail(wiki_link)
+            .then(sight => {
+                if(!sight) {
+                    return next(400);
+                }
+                sight.email = email;
+                sight.comfirmed = false;
+                sight.link = official_site;
+                if(!tags.length) {
+                    //tags.push() Все имена из names
+                }
+                sight.tags = tags;
+                return SightModel.create(sight);
+            })
+            .then(sight => {
+                res.status(201).json(new Sight(sight));
+            });
     });
 
     return router;
