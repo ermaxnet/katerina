@@ -6,7 +6,6 @@ connect(process.env)
             .seed(require("./source/db.json"), { 
                 dropDatabase: false, dropCollections: true 
             });
-        return true;
     })
     .then(() => disconnect())
     .catch(err => console.error(err));

@@ -1,0 +1,12 @@
+{
+    "_model": "Role",
+    "user": {
+        "name": "User"
+    },
+    "moderator": {
+        "name": "Moderator"
+    },
+    "admin": {
+        "name": "Admin"
+    }
+}

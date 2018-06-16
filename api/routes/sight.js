@@ -8,6 +8,7 @@ const Sight = require("../../models/sight");
 const Comment = require("../../models/comment");
 const Wiki = require("../../wiki-api");
 const wiki = new Wiki();
+const KatError = require("../error");
 
 module.exports = router => {
     router.get("/:lang?/sights", localize, (req, res, next) => {
@@ -21,11 +22,11 @@ module.exports = router => {
             } }
         ]).then(sights => {
             if(!sights || !sights.length) {
-                return next(400);
+                throw new KatError({ message: "Достопримечательностей не найдено", statusCode: 204 });
             }
             sights = sights.map(sight => new Sight(sight));
             return res.status(200).json(sights);
-        });
+        }).catch(err => next(err));
     });
     router.get("/:lang?/sight/:id", localize, (req, res, next) => {
         SightModel.aggregate([
@@ -40,7 +41,7 @@ module.exports = router => {
                 { $limit: 1 }
             ]).then(sights => {
                 if(!sights || !sights.length) {
-                    return next(400);
+                    throw new KatError({ statusCode: 400 });
                 }
                 return new Sight(sights[0]);
             }).then(sight => {
@@ -51,22 +52,22 @@ module.exports = router => {
             }).then(([ detail, sight ]) => {
                 sight.addDetail(detail);
                 return res.status(200).json(sight);
-            });
+            }).catch(err => next(err));
     });
     router.get("/sight/:id/comments", (req, res, next) => {
         CommentModel.find({ sight: req.params.id }, "email publishAt name flag text")
             .then(comments => {
                 if(!comments || !comments.length) {
-                    return next(400);
+                    throw new KatError({ message: "У достопримечательности нет комментариев", statusCode: 204 });
                 }
                 comments = comments.map(comment => new Comment(comment));
                 return res.status(200).json(comments);
-            });
+            }).catch(err => next(err));
     });
     router.post("/sight/:id/rate", (req, res, next) => {
         const rate = req.body.rate;
-        if(rate < 0 && rate > 10) {
-            return next(400);
+        if(rate < 0 || rate > 10) {
+            return next(new KatError({ message: "Ваша оценка не может быть меньше 1 и больше 10 баллов", statusCode: 400 }));
         }
         SightModel.aggregate([
             { $match: { _id: mongoose.Types.ObjectId(req.params.id) } },
@@ -83,7 +84,7 @@ module.exports = router => {
             } }
         ]).then(sights => {
             if(!sights || !sights.length) {
-                return next(400);
+                throw new KatError({ statusCode: 400 });
             }
             const new_rate = sights[0].rate;
             return Promise.all([
@@ -94,8 +95,8 @@ module.exports = router => {
                 })
             ]);
         }).then(([ new_rate ]) => {
-            res.json(new_rate);
-        });
+            res.status(202).json(new_rate);
+        }).catch(err => next(err));
     });
     router.put("/sight/:id/comment", geolocation, (req, res, next) => {
         const comment = new Comment(req.body.comment);
@@ -110,33 +111,33 @@ module.exports = router => {
                     { $push: { comments: _id } }
                 );
             })
-            .then(() => {
-                res.status(201).json(comment);
-            });
+            .then(() => res.status(201).json(comment))
+            .catch(err => next(err));
     });
     router.put("/sight", (req, res, next) => {
         const { 
             link: wiki_link, 
             official_site,
             tags = [], email
-        } = req.body;
+        } = req.body.sight;
         wiki.getNewSightDetail(wiki_link)
             .then(sight => {
                 if(!sight) {
-                    return next(400);
+                    throw new KatError({ message: "По вашей ссылке не найдена статья на Википедии", statusCode: 400 });
                 }
                 sight.email = email;
                 sight.comfirmed = false;
                 sight.link = official_site;
                 if(!tags.length) {
-                    //tags.push() Все имена из names
+                    for (const [ key, value ] of sight.names) {
+                        tags.push(`#${value.replace(/\s/g, "_")}`);
+                    }
                 }
                 sight.tags = tags;
                 return SightModel.create(sight);
             })
-            .then(sight => {
-                res.status(201).json(new Sight(sight));
-            });
+            .then(() => res.status(201).json(true))
+            .catch(err => next(err));
     });
 
     return router;

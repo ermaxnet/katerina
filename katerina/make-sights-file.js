@@ -26,7 +26,12 @@ Promise.all(tasks).then(sights => {
     });
     fs.writeFile(
         path.join(__dirname, "source", "db.json"), 
-        JSON.stringify({ comments: require("./source/comments.json"), sights: data }), 
+        JSON.stringify({ 
+            comments: require("./source/comments.json"), 
+            sights: data, 
+            roles: require("./source/roles.json"),
+            users: require("./source/users.json")
+        }), 
         () => {
             console.log("Файл с достопримечательностями успешно записан");
         }

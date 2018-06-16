@@ -1,6 +1,7 @@
 const express = require("express");
 const bodyParser = require("body-parser");
-const { connect } = require("./database");
+const passport = require("./passport");
+const KatError = require("./error");
 
 const app = express();
 app.set("port", process.env.PORT || 3000);
@@ -13,17 +14,19 @@ const router = express.Router({ mergeParams: true });
 app.use("/api", require("./routes/geolocation")(router));
 app.use("/api", require("./routes/sight")(router));
 
+app.use(passport.initialize());
+app.use("/api/admin", require("./routes/admin")(router));
+
 app.use((req, res, next) => {
-    console.log(404);
-    res.end();
+    next(new KatError({ statusCode: 404 }));
 });
 app.use((err, req, res, next) => {
-    console.error(err);
-    res.end();
+    if(err instanceof KatError) {
+        res.status(err.statusCode);
+    } else {
+        res.status(500);
+    }
+    return res.json({ err: err.message, code: err.code || -100 });
 });
 
-connect(process.env).then(() => {
-    app.listen(app.get("port"), () => {
-        console.log(`Katerina API listen on port ${app.get("port")}`);
-    });
-});
+module.exports = app;

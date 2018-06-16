@@ -1,0 +1,9 @@
+{
+    "_model": "User",
+    "max": {
+        "email": "eremin.m.y@yandex.by",
+        "name": "Max Eremin",
+        "password": "VegasmaN17FacebooK",
+        "roles": [ "->roles.user", "->roles.moderator", "->roles.admin" ]
+    }
+}

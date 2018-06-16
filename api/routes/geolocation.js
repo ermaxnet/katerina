@@ -13,7 +13,7 @@ module.exports = router => {
                 lang = "ru";
                 break;
         }
-        res.json({ lang });
+        res.status(200).json({ lang });
     });
     router.get("/geolocation/ip", (req, res) => {
         const ip = req.headers["X-Forwarded-For"]

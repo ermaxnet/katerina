@@ -15,7 +15,8 @@ class Sight {
         link,
         rate,
         comments,
-        email
+        email,
+        comfirmed
     }) {
         this.id = id;
         this.key = key;
@@ -29,6 +30,7 @@ class Sight {
         this.link = link;
         this.rate = rate;
         this.email = email;
+        this.comfirmed = comfirmed;
         
         if(comments && typeof comments === "object") {
             this.comments = 
