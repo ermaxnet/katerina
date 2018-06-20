@@ -112,7 +112,7 @@
         "max": {
             "email": "eremin.m.y@yandex.by",
             "name": "Max Eremin",
-            "password": "VegasmaN17FacebooK",
+            "password": "password",
             "roles": [
                 "->roles.user",
                 "->roles.moderator",

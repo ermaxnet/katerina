@@ -1,8 +1,0 @@
-{
-    "api": {
-        "yandex-maps": {
-            "url": "https://api-maps.yandex.ru",
-            "version": "2.1.59"
-        }
-    }
-}
