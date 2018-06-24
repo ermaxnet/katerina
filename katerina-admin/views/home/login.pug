@@ -1,0 +1,12 @@
+div#login.login(style="visibility: hidden;")
+    form.form(action="/admin/home/auth" method="POST")
+        div.group
+            div.field-wrapper
+                input.field(type="text" name="email" id="email")
+                label.label(for="username") Email
+        div.group
+            div.field-wrapper
+                input.field(type="password" name="password" id="password")
+                label.label(for="password") Password
+        div.actions
+            button#signIn.button.button-p Sign In

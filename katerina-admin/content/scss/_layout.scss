@@ -1,0 +1,181 @@
+@import "susy";
+@import "~bourbon/core/bourbon";
+
+@mixin media-4 {
+    @media screen and (max-width: 599px) {
+        @content;
+    }
+}
+
+@mixin media-8 {
+    @media screen and (min-width: 600px) and (max-width: 839px) {
+        @content;
+    }
+}
+
+@mixin media-12 {
+    @media screen and (min-width: 840px) {
+        @content;
+    }
+}
+
+$susy-4: (
+    columns: susy-repeat(4),
+    gutters: 16px,
+    spread: "wider"
+);
+
+$susy-8: (
+    columns: susy-repeat(8),
+    gutters: 16px,
+    spread: "wider"
+);
+
+$susy-12: (
+    columns: susy-repeat(12),
+    gutters: 24px,
+    spread: "wider"
+);
+
+$columns: (
+     4: $susy-4,
+     8: $susy-8,
+    12: $susy-12
+);
+
+$slug: "susy";
+
+@mixin layout($size) {
+    $susy: map-get($columns, $size);
+    width: susy-span(map-get($susy, "columns") of map-get($susy, "columns"));
+
+    @for $idx from 1 through 12 {
+        @if $size == 4 {
+            @if $idx <= 3 {
+                .#{$slug}-#{4}-#{$idx} {
+                    width: susy-span(1 of 4 set-gutters 16px);
+                }
+            }
+            @else if $idx <= 6 {
+                .#{$slug}-#{4}-#{$idx} {
+                    width: susy-span(2 of 4 set-gutters 16px);
+                }
+            }
+            @else if $idx <= 9 {
+                .#{$slug}-#{4}-#{$idx} {
+                    width: susy-span(3 of 4 set-gutters 16px);
+                }
+            }
+            @else {
+                .#{$slug}-#{4}-#{$idx} {
+                    width: susy-span(4 of 4 set-gutters 16px);
+                }
+            }
+        } 
+        @else if $size == 8 {
+            @if $idx <= 3 {
+                .#{$slug}-#{8}-#{$idx} {
+                    width: susy-span(2 of 8 set-gutters 16px);
+                }
+            }
+            @else if $idx <= 6 {
+                .#{$slug}-#{8}-#{$idx} {
+                    width: susy-span(4 of 8 set-gutters 16px);
+                }
+            }
+            @else if $idx <= 9 {
+                .#{$slug}-#{8}-#{$idx} {
+                    width: susy-span(6 of 8 set-gutters 16px);
+                }
+            }
+            @else {
+                .#{$slug}-#{8}-#{$idx} {
+                    width: susy-span(8 of 8 set-gutters 16px);
+                }
+            }
+        } 
+        @else {
+            .#{$slug}-#{12}-#{$idx} {
+                width: susy-span($idx of 12 set-gutters 24px);
+            }
+        }
+    }
+
+    @if $size == 4 {
+        [class^="#{$slug}"] {
+            margin-right: 16px;
+
+            &:nth-child(4n) {
+                margin-right: 0!important;
+            }
+        }
+    }
+    @else if $size == 8 {
+        [class^="#{$slug}"] {
+            margin-right: 16px;
+
+            &:nth-child(4n) {
+                margin-right: 0!important;
+            }
+        }
+    }
+    @else {
+        [class^="#{$slug}"] {
+            margin-right: 24px;
+        }
+    }
+
+    [class^="#{$slug}"] {
+        float: left;
+
+        &:last-child {
+            margin-right: 0!important;
+        }
+    }
+}
+
+.#{$slug} {
+    width: 100%;
+    @include clearfix;
+
+    @include media-4() {
+        @include layout(4);
+    }
+
+    @include media-8() {
+        @include layout(8);
+    }
+
+    @include media-small-2() {
+        @for $idx from 1 through 12 {
+            @if $idx <= 3 {
+                .#{$slug}-#{8}-#{$idx} {
+                    width: susy-span(2 of 8 set-gutters 24px);
+                }
+            }
+            @else if $idx <= 6 {
+                .#{$slug}-#{8}-#{$idx} {
+                    width: susy-span(4 of 8 set-gutters 24px);
+                }
+            }
+            @else if $idx <= 9 {
+                .#{$slug}-#{8}-#{$idx} {
+                    width: susy-span(6 of 8 set-gutters 24px);
+                }
+            }
+            @else {
+                .#{$slug}-#{8}-#{$idx} {
+                    width: susy-span(8 of 8 set-gutters 24px);
+                }
+            }
+        }
+
+        [class^="#{$slug}"] {
+            margin-right: 24px;
+        }
+    }
+
+    @include media-12() {
+        @include layout(12);
+    }
+}

@@ -1,0 +1,141 @@
+%active-label {
+    font-size: 12px;
+    line-height: 12px;
+    top: 8px;
+}
+
+.login {
+    position: relative;
+    width: 100%;
+    padding: 0 16px;
+    
+    @media screen and (min-width: 840px) {
+        padding: 0 24px;
+    }
+
+    .form {
+        position: relative;
+
+        .group {
+            width: 100%;
+            margin-bottom: 30px;
+
+            .field-wrapper {
+                position: relative;
+                width: 280px;
+                margin: auto;
+                transition: width $animation-duration-slow $animation-effect-1;
+                
+                &.on-focus {
+                    width: 312px;
+                }
+            }
+
+            .field {
+                display: block;
+                width: 100%;
+                height: 56px;
+                line-height: 56px;
+                padding: 0 12px;
+                border: none;
+                border-bottom: 1px solid $tf-border-color;
+                background-color: $tf-background-color;
+                color: $tf-text-color; 
+                font-size: 16px;
+                @include border-top-radius(4px);
+                transition: all $animation-duration-slow $animation-effect-1;
+
+                &:focus {
+                    outline: none;
+                    border-bottom-width: 2px;
+                    border-bottom-color: $tf-border-color-focus;
+                    color: $tf-text-color-focus;
+                    padding-top: 16px;
+
+                    & + .label {
+                        @extend %active-label;
+                        color: $tf-label-text-color;
+                    }
+                }
+
+                &.on-full {
+                    padding-top: 16px;
+                    color: $tf-text-color-focus;
+
+                    & + .label {
+                        @extend %active-label;
+                    }
+                }
+
+                &.on-error {
+                    border-bottom-width: 2px;
+                    border-bottom-color: $tf-border-color-error;
+
+                    & + .label {
+                        color: $tf-label-text-color-error;
+                    }
+
+                    & ~ .text {
+                        color: $tf-text-color-error;
+                    }
+                }
+            }
+
+            .label {
+                position: absolute;
+                color: $tf-text-color; 
+                font-size: 16px;
+                line-height: 16px;
+                left: 12px; top: 20px;
+                transition: all $animation-duration-slow $animation-effect-1;
+            }
+
+            .text {
+                font-size: 12px;
+                line-height: 12px;
+                margin-top: 4px;
+                padding-left: 12px;
+                color: $tf-text-color; 
+            }
+        }
+
+        .actions {
+            width: 280px;
+            margin: auto;
+            text-align: right;
+        }
+    }
+}
+
+.button {
+    min-width: 64px;
+    height: 36px;
+    border: 0;
+    background-color: transparent;
+    padding: 0 16px;
+    cursor: pointer;
+    text-align: center;
+    font-size: 14px;
+    line-height: 38px;
+    letter-spacing: 1px;
+    color: black;
+    background-color: $button-background-color;
+    text-transform: uppercase;
+    border-radius: 4px;
+    box-shadow: 0 1px 2px $button-box-shadow-color;
+
+    &.button-p {
+        background-color: $button-background-color-p;
+        color: white;
+        transition: background-color $animation-duration-slow $animation-effect-1;
+
+        &:hover {
+            background-color: transparentize($button-background-color-p, .1);
+        }
+
+        &:focus {
+            background-color: transparentize($button-background-color-p, .2);
+            outline: none;
+        }
+    }
+}

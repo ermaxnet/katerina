@@ -1,0 +1,36 @@
+@import "~normalize.css";
+
+@import "mixins/media";
+@import "layout";
+
+@import "variables";
+@import "page";
+@import "form";
+@import "data-table";
+
+.page__menu {
+    position: fixed;
+    background-color: $menu-background-color;
+    height: 100%;
+    top: 0; left: 0;
+
+    @include media-4 {
+        height: susy-span(1 of 4);
+    }
+}
+
+.page__content {
+    position: absolute;
+    top: 0; right: 0;
+    height: 100%;
+    padding: 30px;
+}
+
+.link {
+    color: $link-color;
+    transition: color $animation-duration-slow $animation-effect-1;
+
+    &:hover {
+        color: darken($link-color, 10%);
+    }
+}

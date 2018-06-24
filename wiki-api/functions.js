@@ -18,7 +18,9 @@ const request = (endpoint, query, options = {}) => {
         path += "?" + query;
     }
     const protocol = options.protocol === "http" ? http : https;
-    const port = options.protocol === "http" ? 80 : 443;
+    const port = options.port 
+        ? options.port 
+        : options.protocol === "http" ? 80 : 443;
     delete options.protocol;
     options = {
         ...options,

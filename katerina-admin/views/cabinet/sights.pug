@@ -1,0 +1,29 @@
+extends ../shared/layout.pug
+
+block body
+    div.page.susy
+        include sidebar.pug
+        div.susy-4-12.susy-8-9.susy-12-10.page__content
+            div.data-table__wrapper
+                h3.data-table__name Sights
+                table#sights.data-table
+                    thead.data-table__header
+                        tr
+                            th.data-table__header-name
+                                span Name
+                            th.data-table__header-name.number
+                                span Key
+                            th.data-table__header-name
+                                span Coords
+                            th.data-table__header-name
+                                span Tags
+                            th.data-table__header-name.number
+                                span Rate
+                            th.data-table__header-name
+                                span Email
+                            th.data-table__header-name
+                                span At
+                            th.data-table__header-name
+
+block scripts
+    script(src="/sights.js")

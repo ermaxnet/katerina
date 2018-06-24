@@ -1,0 +1,42 @@
+@import "~normalize.css";
+
+@import "mixins/media";
+@import "layout";
+
+@import "variables";
+@import "page";
+@import "form";
+
+.side-wrapper {
+    position: absolute;
+    height: 100%;
+    float: none;
+    right: 0; top: 0;
+    background-color: white;
+}
+
+.app-name {
+    position: relative;
+    font-size: 3.43em;
+    text-transform: uppercase;
+    text-align: center;
+    margin-top: 32px;
+    line-height: 112px;
+
+    .letters-context {
+        display: inline-block;
+    }
+}
+
+.admin-mark {
+    position: absolute;
+    font-size: 1rem;
+    line-height: 1em;
+    text-transform: lowercase;
+    right: 0; bottom: 0;
+    background-color: transparent;
+}
+
+.page {
+    background-image: url("/images/background.jpg");
+}

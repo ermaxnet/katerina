@@ -1,6 +1,6 @@
-const auth = require("./authorization");
+const home = require("./home");
+const sights = require("./sights");
 
 module.exports = {
-    auth,
-    authorization: auth
+    home, sights
 };

@@ -22,7 +22,7 @@ const releaseToken = user => {
             algorithm: "HS512",
             audience: jwt.audience,
             issuer: jwt.issuer,
-            expiresIn: 24 * 60 * 60
+            expiresIn: 900
         }
     );
 };
@@ -63,7 +63,11 @@ module.exports = router => {
                     if(!sights || !sights.length) {
                         throw new KatError({ message: "Достопримечательностей не найдено", statusCode: 204 });
                     }
-                    sights = sights.map(sight => new Sight(sight));
+                    sights = sights.map(sight => {
+                        sight.key = sight.keys.get("en");
+                        sight.name = sight.names.get("en");
+                        return new Sight(sight);
+                    });
                     return res.status(200).json(sights);
                 })
                 .catch(err => next(err));

@@ -2,7 +2,7 @@ const controllers = require("../controllers");
 const KatError = require("../../api/error");
 
 module.exports = (req, res, next) => {
-    const name = req.params.controller;
+    const name = req.params.controller || "home";
     let actionName = req.params.action || "index";
     actionName = `${req.method.toLowerCase()}_${actionName}`;
     if(!name || !controllers.hasOwnProperty(name)) {
